@@ -2,3 +2,8 @@
 __pycache__/
 db.sqlite3
 venv
+*.jpg
+*.png
+*.ttf
+*.woff
+*.woff2
