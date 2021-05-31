@@ -24,7 +24,7 @@ html, body {
 
 .slider {
 	height: 800px;
-	background-image: url(img/slider.jpg); 
+	background-image: url(img/slider.jpg);
 	padding-left: 98px;
 	padding-right: 211px;
 	position: relative;
@@ -84,7 +84,7 @@ html, body {
 	display: block;
 	width: 23px;
 	height: 23px;	
-	background-image: url(img/basket.png);
+	background-image: url(img/social-links.png);
 	position: absolute;
 	top: 63px;
 	left: 1210px;
