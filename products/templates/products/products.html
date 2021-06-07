@@ -7,7 +7,14 @@
 				<a href={% url 'index' %} class="logo"></a>
 				<ul class="menu">
 					<li><a href={% url 'index' %}>домой</a></li>
-					<li><a href={% url 'products' %} class="active">продукты</a></li>
+					<li><a href={% url 'products:index' %} class="active">продукты</a></li>
+					{% if user.is_authenticated %}
+						<li><a href="#">{{ user.username }}</a></li>
+						<li><a href={% url 'users:logout' %}>выйти</a></li>
+					{% else %}
+						<li><a href={% url 'users:login' %}>войти</a></li>
+						<li><a href={% url 'users:register' %}>зарегистрироваться</a></li>
+					{% endif %}
 				</ul>
 				<a href="#" class="search"></a>
                 <a href="#" class="basket"></a>

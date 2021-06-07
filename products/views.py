@@ -3,8 +3,8 @@ from products.models import Products, ProductCategory, Menu
 from django.conf import settings
 
 
-
 # Create your views here.
+
 def index(request):
     products_list = Products.objects.all()
     context = {
