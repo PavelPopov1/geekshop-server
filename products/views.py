@@ -1,51 +1,32 @@
 from django.shortcuts import render
+from products.models import Products, ProductCategory, Menu
+from django.conf import settings
+
 
 
 # Create your views here.
 def index(request):
+    products_list = Products.objects.all()
     context = {
         "title": "Магазин",
-        "products": [
-            {"name": "Отличный стул",
-             "par": "Расположитесь комфортно.",
-             "img": "img/product-1.jpg"},
-            {"name": "Стул повышенного качества",
-             "par": "Не оторваться.",
-             "img": "img/product-2.jpg"}
-        ],
+        "products": products_list,
         "icon": "img/icon-hover.png",
         "socials": ["social1",
                     "social2",
                     "social3",
-                    "social4"]
+                    "social4"],
+        "media_path": settings.MEDIA_URL
     }
     return render(request, 'products/index.html', context)
 
 
 def products(request):
+    products_list = Products.objects.all()
+    menu = Menu.objects.all()
     context = {
         "title": "Каталог товаров",
-        "menus": [
-            {"name": "все", "href": "#"},
-            {"name": "дом", "href": "#"},
-            {"name": "офис", "href": "#"},
-            {"name": "модерн", "href": "#"},
-            {"name": "классика", "href": "#"}
-        ],
-        "products": [
-            {"name": "Стул повышенного качества",
-             "par": "Не оторваться.",
-             "img": "img/product-11.jpg",
-             "href": "#"},
-            {"name": "Стул повышенного качества",
-             "par": "Не оторваться.",
-             "img": "img/product-21.jpg",
-             "href": "#"},
-            {"name": "Стул повышенного качества",
-             "par": "Не оторваться.",
-             "img": "img/product-31.jpg",
-             "href": "#"}
-        ],
+        "menus": menu,
+        "products": products_list,
         "icon": "img/icon-hover.png",
         "controls": [
             "img/controll.jpg",
@@ -55,7 +36,8 @@ def products(request):
         "socials": ["social1",
                     "social2",
                     "social3",
-                    "social4"]
+                    "social4"],
+        "media_path": settings.MEDIA_URL
     }
     return render(request, 'products/products.html', context)
 
