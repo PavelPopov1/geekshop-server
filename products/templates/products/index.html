@@ -1,6 +1,9 @@
 {% extends 'products/base.html' %}
 {% load static %}
-
+{% block style %}
+	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+{% endblock %}
 {% block slider %}
 	<div class="slider">
 			<div class="header clearfix">
@@ -9,7 +12,7 @@
 					<li><a href={% url 'index' %} class="active">домой</a></li>
 					<li><a href={% url 'products:index' %}>продукты</a></li>
 					{% if user.is_authenticated %}
-						<li><a href="#">{{ user.username }}</a></li>
+						<li><a href={% url 'users:profile' %}>{{ user.username }}</a></li>
 						<li><a href={% url 'users:logout' %}>выйти</a></li>
 					{% else %}
 						<li><a href={% url 'users:login' %}>войти</a></li>

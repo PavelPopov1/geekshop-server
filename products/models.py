@@ -12,7 +12,7 @@ class Products(models.Model):
     description = models.TextField(blank=True)
     product_img = models.ImageField(blank=True, upload_to="products_img")
     price = models.DecimalField(decimal_places=2, max_digits=32)
-    category_type = models.ForeignKey(ProductCategory, on_delete=models.RESTRICT)
+    category_type = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
 
 
 class Menu(models.Model):

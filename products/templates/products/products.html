@@ -1,6 +1,9 @@
 {% extends 'products/base.html' %}
 {% load static %}
-
+{% block style %}
+	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+{% endblock %}
 {% block description %}
 	<div class="hero-white">
 			<div class="header clearfix">
@@ -9,7 +12,7 @@
 					<li><a href={% url 'index' %}>домой</a></li>
 					<li><a href={% url 'products:index' %} class="active">продукты</a></li>
 					{% if user.is_authenticated %}
-						<li><a href="#">{{ user.username }}</a></li>
+						<li><a href={% url 'users:profile' %}>{{ user.username }}</a></li>
 						<li><a href={% url 'users:logout' %}>выйти</a></li>
 					{% else %}
 						<li><a href={% url 'users:login' %}>войти</a></li>
@@ -72,11 +75,13 @@
 				<div class="related-products clearfix">
 					{% for product in products %}
 						<div class="block">
-							<a href={{ product.href }}><img src="{{ media_path }}{{ product.product_img }}" alt="">
+							<a href={% url 'basket:basket_add' product.id %}>
+								<img src="{{ media_path }}{{ product.product_img }}" alt="">
 								<div class="text">
-									<img src={% static icon %} alt="img">
+									<img src={% static 'img/icon_add.png' %} alt="img">
 									<h4>{{ product.name }}</h4>
 									<p>{{ product.description }}</p>
+									<p>{{ product.price }} руб</p>
 								</div>
 							</a>
 						</div>
