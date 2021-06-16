@@ -58,9 +58,7 @@
                             {{ message }}
                         {% endfor %}
                     {% else %}
-                        {% for error in form.non_field_errors%}
-                            {{ error }}
-                        {% endfor %}
+                        {{ form.errors|escape }}
                     {% endif %}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -126,8 +124,9 @@
 <!-- Bootstrap core JavaScript -->
 <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 
 <!-- FontAwesome script -->
-<script src="{% static 'vendor/fontawesome/fontawesome-icons.js' %}" crossorigin="anonymous"></script>
+<script src="{% static 'js/basket.js' %}" crossorigin="anonymous"></script>
 </body>
 </html>
