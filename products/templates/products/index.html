@@ -18,6 +18,9 @@
 						<li><a href={% url 'users:login' %}>войти</a></li>
 						<li><a href={% url 'users:register' %}>зарегистрироваться</a></li>
 					{% endif %}
+					{% if user.is_staff or user.is_superuser %}
+						<li><a href={% url 'admins:index' %}>админ-панель</a></li>
+					{% endif %}
 				</ul>
 				<a href="#" class="search"></a>
 			</div>
