@@ -14,12 +14,12 @@
                       <div class="row text-center">
                           <div class="col-lg-4">
                               <input name="{{ bask.id }}" type="number" class="form-control"
-                                     value="{{ bask.quantity }}" min="1">
+                                     value="{{ bask.quantity }}" min="0">
                           </div>
                           <div class="col-lg-4">{{ bask.sum }} руб.</div>
                           <div class="col-lg-4">
                               <a href={% url 'basket:basket_del' bask.id %}>
-                                  <i class="fas fa-trash"></i>
+                                  <i class="fas fa-trash">Удалить</i>
                               </a>
                           </div>
                       </div>

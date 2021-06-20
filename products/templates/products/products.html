@@ -3,6 +3,8 @@
 {% block style %}
 	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+	<!-- Bootstrap core CSS -->
+	<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 {% endblock %}
 {% block description %}
 	<div class="hero-white">
@@ -12,7 +14,7 @@
 					<li><a href={% url 'index' %}>домой</a></li>
 					<li><a href={% url 'products:index' %} class="active">продукты</a></li>
 					{% if user.is_authenticated %}
-						<li><a href={% url 'users:profile' %}>{{ user.username }}</a></li>
+						<li><a href={% url 'users:profile' user.id %}>{{ user.username }}</a></li>
 						<li><a href={% url 'users:logout' %}>выйти</a></li>
 					{% else %}
 						<li><a href={% url 'users:login' %}>войти</a></li>
@@ -27,56 +29,45 @@
 		<div class="details">
 			<div class="links clearfix">
 				<ul class="links-menu">
-					{% for menu in menus %}
-						<li><a href={{ menu.href }}>{{ menu.name }}</a></li>
+					{% for category in categories %}
+						<li><a href="{% url 'products:product' category.id %}">{{ category.name }}</a></li>
 					{% endfor %}
+					<li><a href="{% url 'products:index' %}">без фильтра</a></li>
 				</ul>
 			</div>
 
-			<div class="details-products">
-				<div class="details-slider">
-					<div class="slider-product">
-						<img src={% static 'img/slider1.jpg' %}>
+			{% if hot_product %}
+				<div class="details-products">
+					<div class="details-slider">
+						<div class="slider-product">
+							<img width="570" height="570" src="{{media_path}}{{ hot_product.product_img }}" alt="#">
+						</div>
 					</div>
-					<div class="slider-control">
-						{% for control in controls %}
-							<div class="block">
-								<a href="#"><img src={% static control %} alt="">
-									<div class="text"></div>
-								</a>
-							</div>
-						{% endfor %}
-					</div>
-				</div>
 
-				<div class="description">
-					<h3 class="big-bold">Отличный стул</h3>
-					<h3 class="red">горячее предложение</h3>
-					<p class="price"> 2585.9 <span>руб</span></p>
-					<a href="#" class="red-button">
-						заказать <i class="fa fa-chevron-right" aria-hidden="true"></i>
-					</a>
-					<div class="description-text">
-						<p>Расположитесь комфортно.</p>
-						<p>Отличное качество материалов
-						позволит вам это.</p>
-						<p>Различные цвета</p>
-						<p>высочайший уровень
-						эргономики и прочность.</p>
+					<div class="description">
+						<h3 class="big-bold">{{ hot_product.name }}</h3>
+						<h3 class="red">горячее предложение</h3>
+						<p class="price"> {{ hot_product.price }} <span>руб</span></p>
+						<a href="{% url 'basket:basket_add' hot_product.id %}" class="red-button">
+							заказать <i class="fa fa-chevron-right" aria-hidden="true"></i>
+						</a>
+						<div class="description-text">
+							{{ hot_product.description }}
+						</div>
 					</div>
 				</div>
-			</div>
+			{% endif %}
 
 			<div class="related">
 				<div class="title clearfix">
-					<h2>Похожие продукты</h2>
-					<a class="explore" href="#">показать все <img src={% static 'img/arrow.png' %} alt=""></a>
+					<h2>Продукты</h2>
+					<a class="explore" href="{% url 'products:index' %}">показать все <img src={% static 'img/arrow.png' %} alt=""></a>
 				</div>
 				<div class="related-products clearfix">
-					{% for product in products %}
+					{% for product in page_obj %}
 						<div class="block">
-							<a href={% url 'basket:basket_add' product.id %}>
-								<img src="{{ media_path }}{{ product.product_img }}" alt="">
+							<a href="{% url 'basket:basket_add' product.id %}">
+								<img width="370" height="370" src="{{ media_path }}{{ product.product_img }}" alt="">
 								<div class="text">
 									<img src={% static 'img/icon_add.png' %} alt="img">
 									<h4>{{ product.name }}</h4>
@@ -90,6 +81,50 @@
 			</div>
 		</div>
 
+		<nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-center">
+				<li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">
+					<a class="page-link"
+					   href="
+					   	{% if page_obj.has_previous %}
+					   		{% if category_type_id %}
+					   			{% url 'products:filter_page' category_type_id page_obj.previous_page_number %}
+					   		{% else %}
+					   			{% url 'products:page' page_obj.previous_page_number %}
+					   		{% endif %}
+					   	{% else %}
+					   		#
+					   	{% endif %}" tabindex="-1" aria-disabled="true">
+						Предыдущая
+					</a>
+				</li>
+				{% for page in paginator.page_range %}
+					<li class="page-item">
+						<a class="page-link" href="
+							{% if category_type_id %}
+								{% url 'products:filter_page' category_type_id page %}
+							{% else %}
+								{% url 'products:page' page %}
+							{% endif %}">
+							{{ page }}
+						</a>
+					</li>
+				{% endfor %}
+				<li class="page-item {% if not page_obj.has_next %} disabled {% endif %}">
+					<a class="page-link" href="
+					   	{% if page_obj.has_next %}
+					   		{% if category_type_id %}
+					   			{% url 'products:filter_page' category_type_id page_obj.next_page_number %}
+					   		{% else %}
+					   			{% url 'products:page' page_obj.next_page_number %}
+					   		{% endif %}
+					   	{% else %}
+					   		#
+					   	{% endif %}">Следующая</a>
+				</li>
+			</ul>
+		</nav>
 		<div class="clr"></div>
+
 {% endblock %}
 

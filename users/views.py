@@ -1,79 +1,82 @@
-from django.shortcuts import render, HttpResponseRedirect
-from django.contrib import auth, messages
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import HttpResponseRedirect
+from django.contrib import auth
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.list import ListView
+from django.views.generic.edit import FormView, UpdateView, CreateView
+from django.contrib.messages.views import SuccessMessageMixin
 
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+from users.models import User
 from basket.models import Basket
 
 
 # Create your views here.
 
-def login(request):
-    if request.method == "POST":
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
+class LoginView(FormView):
+    template_name = 'users/login.html'
+    form_class = UserLoginForm
+    success_url = reverse_lazy('index')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(LoginView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Авторизация'
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if self.form_class(data=request.POST).is_valid():
             username = request.POST["username"]
             password = request.POST["password"]
             user = auth.authenticate(username=username,
                                      password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(self.get_success_url())
+            else:
+                return super(LoginView, self).post(request, *args, **kwargs)
         else:
-            print(form.errors)
-    else:
-        form = UserLoginForm()
-    context = {
-        'title': 'GeekShop - Авторизация',
-        'form': form
-    }
-    return render(request, 'users/login.html', context)
+            return super(LoginView, self).post(request, *args, **kwargs)
 
 
-def register(request):
-    if request.method == "POST":
-        form = UserRegistrationForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Регистрация прошла успешно!")
-            return HttpResponseRedirect(reverse('users:login'))
-        else:
-            print(form.errors)
-    else:
-        form = UserRegistrationForm()
-    context = {
-        'title': 'GeekShop - Регистрация',
-        'form': form
-    }
-    return render(request, 'users/register.html', context)
+class RegisterView(SuccessMessageMixin, CreateView):
+    model = User
+    template_name = 'users/register.html'
+    form_class = UserRegistrationForm
+    success_url = reverse_lazy('users:login')
+    success_message = 'Регистрация прошла успешно!'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(RegisterView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Регистрация'
+        return context
 
 
-@login_required
-def profile(request):
-    if request.method == "POST":
-        form = UserProfileForm(data=request.POST,
-                               files=request.FILES,
-                               instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Данные сохранены!")
-            return HttpResponseRedirect(reverse('users:profile'))
-        else:
-            print(form.errors)
-    else:
-        form = UserProfileForm(instance=request.user)
+class ProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = User
+    template_name = 'users/profile.html'
+    form_class = UserProfileForm
+    success_url = reverse_lazy('users:profile')
+    success_message = 'Данные сохранены!'
 
-    context = {'title': 'GeekShop - Личный кабинет',
-               'form': form,
-               'basket': Basket.objects.filter(user=request.user)}
-    return render(request, 'users/profile.html', context=context)
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Личный кабинет'
+        context['basket'] = Basket.objects.filter(user=self.request.user)
+        return context
+
+    def get_success_url(self):
+        referer_url = self.request.META.get('HTTP_REFERER')
+        return referer_url  # return referer url for redirection
 
 
-@login_required
-def logout(request):
-    auth.logout(request)
-    return HttpResponseRedirect(reverse('index'))
+class LogoutView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'products/index.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(LogoutView, self).get_context_data(**kwargs)
+        auth.logout(self.request)
+        return context
 
 
 

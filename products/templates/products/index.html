@@ -3,6 +3,8 @@
 {% block style %}
 	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+	<!-- Bootstrap core CSS -->
+	<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 {% endblock %}
 {% block slider %}
 	<div class="slider">
@@ -12,7 +14,7 @@
 					<li><a href={% url 'index' %} class="active">домой</a></li>
 					<li><a href={% url 'products:index' %}>продукты</a></li>
 					{% if user.is_authenticated %}
-						<li><a href={% url 'users:profile' %}>{{ user.username }}</a></li>
+						<li><a href={% url 'users:profile' user.id %}>{{ user.username }}</a></li>
 						<li><a href={% url 'users:logout' %}>выйти</a></li>
 					{% else %}
 						<li><a href={% url 'users:login' %}>войти</a></li>
@@ -45,19 +47,51 @@
 			<div class="clearfix">
 			</div>
 			<div class="tab-content">
-				{% for product in products %}
+				{% for product in page_obj %}
 					<div class="block">
-						<a href="#"><img src="{{ media_path }}{{ product.product_img }}" alt="">
+						<a href="{% url 'basket:basket_add' product.id %}"><img height="270" width="270" src="{{ media_path }}{{ product.product_img }}" alt="">
 							<div class="text">
 								<img src={% static icon %} alt="img">
 								<h4>{{ product.name }}</h4>
 								<p>{{ product.description }}</p>
+								<p>{{ product.price }} руб</p>
 							</div>
 						</a>
 					</div>
 				{% endfor %}
 			</div>
 		</div>
+
+		<nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-center">
+				<li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">
+					<a class="page-link"
+					   href="
+					   	{% if page_obj.has_previous %}
+					   		{% url 'page' page_obj.previous_page_number %}
+					   	{% else %}
+					   		#
+					   	{% endif %}" tabindex="-1" aria-disabled="true">
+						Предыдущая
+					</a>
+				</li>
+				{% for page in paginator.page_range %}
+					<li class="page-item">
+						<a class="page-link" href="{% url 'page' page %}">
+							{{ page }}
+						</a>
+					</li>
+				{% endfor %}
+				<li class="page-item {% if not page_obj.has_next %} disabled {% endif %}">
+					<a class="page-link" href="
+					   	{% if page_obj.has_next %}
+					   		{% url 'page' page_obj.next_page_number %}
+					   	{% else %}
+					   		#
+					   	{% endif %}">Следующая</a>
+				</li>
+			</ul>
+		</nav>
 
 		<div class="clr"></div>
 {% endblock %}

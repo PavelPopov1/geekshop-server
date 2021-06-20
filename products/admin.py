@@ -1,8 +1,8 @@
 from django.contrib import admin
-from products.models import Products, ProductCategory, Menu
+from products.models import Products, ProductCategory, NewProducts
 
 admin.site.register(ProductCategory)
-admin.site.register(Menu)
+admin.site.register(NewProducts)
 
 # Register your models here.
 
