@@ -15,8 +15,7 @@ class Products(models.Model):
     category_type = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
 
 
-class Menu(models.Model):
-    name=models.CharField(unique=True, max_length=16)
-    href=models.CharField(max_length=128)
+class NewProducts(models.Model):
+    product_key = models.ForeignKey(Products, on_delete=models.CASCADE)
 
 
