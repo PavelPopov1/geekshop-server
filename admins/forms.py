@@ -15,8 +15,12 @@ class UserAdminRegistrationForm(UserRegistrationForm):
 
 
 class UserAdminProfileForm(UserProfileForm):
-    username = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'form-control py-4', 'readonly': False}))
-    email = forms.CharField(widget=forms.EmailInput(
-        attrs={'class': 'form-control py-4',
-               'readonly': False}))
+    username = forms.CharField(widget=forms.TextInput())
+    email = forms.CharField(widget=forms.EmailInput())
+
+    def __init__(self, *args, **kwargs):
+        super(UserAdminProfileForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control py-4"
+            field.widget.attrs["readonly"] = False
+
