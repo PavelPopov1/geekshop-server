@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, User
 from django import forms
 from django.core.exceptions import ValidationError
 
-from users.models import User
+from users.models import User, UserProfile
 
 
 class UserLoginForm(AuthenticationForm):
@@ -88,3 +88,17 @@ class UserProfileForm(UserChangeForm):
         model = User
         fields = ('username', 'email', 'first_name',
                   'last_name', 'image', 'age')
+
+
+class UserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('tagline', 'gender', 'about_me')
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileEditForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name != 'gender':
+                field.widget.attrs['class'] = 'form-control py-4'
+            else:
+                field.widget.attrs['class'] = 'form-control'

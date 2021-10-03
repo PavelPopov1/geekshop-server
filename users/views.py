@@ -10,9 +10,10 @@ from django.core.mail import send_mail
 from django.contrib import auth, messages
 from django.shortcuts import render
 
-from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm, UserProfileEditForm
 from users.models import User
 from basket.models import Basket
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -62,22 +63,57 @@ class RegisterView(SuccessMessageMixin, CreateView):
         return context
 
 
-class ProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(data=request.POST, instance=request.user, files=request.FILES)
+        profile_form = UserProfileEditForm(data=request.POST, instance=request.user.userprofile)
+        if form.is_valid() and profile_form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('users:profile'))
+
+    else:
+        form = UserProfileForm(instance=request.user)
+        profile_form = UserProfileEditForm(instance=request.user.userprofile)
+    context = {
+        'title': 'GeekShop - Профиле',
+        'form': form,
+        'profile_form': profile_form
+    }
+    return render(request, 'users/profile.html', context)
+
+'''class ProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     template_name = 'users/profile.html'
     form_class = UserProfileForm
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy('users:profile_default')
     success_message = 'Данные сохранены!'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
         context['title'] = 'GeekShop - Личный кабинет'
         context['basket'] = Basket.objects.filter(user=self.request.user)
+        context['profile_form'] = UserProfileEditForm(data=self.request.POST, instance=self.request.user.userprofile)
         return context
 
     def get_success_url(self):
         referer_url = self.request.META.get('HTTP_REFERER')
         return referer_url  # return referer url for redirection
+
+    def post(self, request, *args, **kwargs):
+        super(ProfileView, self).post(request, *args, **kwargs)
+        form = self.get_form(self.form_class)
+        return self.form_valid(form, **kwargs)
+
+    def form_valid(self, form, **kwargs):
+        profile_form = UserProfileEditForm(data=self.request.POST, instance=self.request.user.userprofile)
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        context['profile_form'] = profile_form
+
+        if form.is_valid() and profile_form.is_valid():
+            user = form.save()
+        return HttpResponseRedirect(self.success_url + f'{user.id}/')'''
+
 
 
 class LogoutView(LoginRequiredMixin, ListView):
