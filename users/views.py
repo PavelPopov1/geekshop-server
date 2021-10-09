@@ -3,7 +3,7 @@ from django.contrib import auth
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import ListView
-from django.views.generic.edit import FormView, UpdateView, CreateView
+from django.views.generic.edit import FormView, CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.conf import settings
 from django.core.mail import send_mail
@@ -12,7 +12,6 @@ from django.shortcuts import render
 
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm, UserProfileEditForm
 from users.models import User
-from basket.models import Basket
 from django.contrib.auth.decorators import login_required
 
 
@@ -82,6 +81,7 @@ def profile(request):
     }
     return render(request, 'users/profile.html', context)
 
+
 '''class ProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     template_name = 'users/profile.html'
@@ -115,7 +115,6 @@ def profile(request):
         return HttpResponseRedirect(self.success_url + f'{user.id}/')'''
 
 
-
 class LogoutView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'products/index.html'
@@ -141,7 +140,7 @@ def verify(request, email, activation_key):
         user.activation_key_expires = None
         user.is_active = True
         user.save()
-        auth.login(request, user)
+        auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
     return render(request, 'users/verification.html')
     #except Exception as e:

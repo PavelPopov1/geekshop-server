@@ -136,3 +136,21 @@ def forming_complete(request, pk):
     return HttpResponseRedirect(reverse('orders:list'))
 
 
+'''@receiver(pre_save, sender=Basket)
+@receiver(pre_save, sender=OrderItem)
+def product_quantity_update_save(sender, update_fields, instance, **kwargs):
+    # if 'product' in update_fields or 'quantity' in update_fields:
+    if instance.pk:
+        instance.product.quantity -= instance.quantity - instance.get_item(instance.pk).quantity
+    else:
+        instance.product.quantity -= instance.quantity
+    instance.product.save()
+
+
+@receiver(pre_delete, sender=Basket)
+@receiver(pre_delete, sender=OrderItem)
+def product_quantity_update_delete(sender, instance, **kwargs):
+    instance.product.quantity += instance.quantity
+    instance.product.save()'''
+
+
