@@ -221,7 +221,7 @@ if DEBUG:
         'template_profiler_panel.panels.template.TemplateProfilerPanel',
     ]
 
-'''CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 120
 CACHE_MIDDLEWARE_KEY_PREFIX = 'geekshop'
 
@@ -233,4 +233,4 @@ CACHES = {
 
 }
 
-LOW_CACHE = True'''
+LOW_CACHE = True
