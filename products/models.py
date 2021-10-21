@@ -4,6 +4,7 @@ from django.db import models
 class ProductCategory(models.Model):
     name = models.CharField(unique=True, max_length=64)
     description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True, db_index=True)
 
 
 # Create your models here.
@@ -13,6 +14,11 @@ class Products(models.Model):
     product_img = models.ImageField(blank=True, upload_to="products_img")
     price = models.DecimalField(decimal_places=2, max_digits=32)
     category_type = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True, db_index=True)
+
+    def __str__(self):
+        return self.name
 
 
 class NewProducts(models.Model):
